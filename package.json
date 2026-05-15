@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "kilo-agentmemory-bridge",
+  "version": "0.1.0",
+  "description": "Kilo/OpenCode server plugin bridge for agentmemory.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./server": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts",
+      "config": {
+        "url": {
+          "type": "string",
+          "description": "agentmemory server URL",
+          "default": "http://localhost:3111",
+          "env": "AGENTMEMORY_URL"
+        },
+        "secret": {
+          "type": "string",
+          "description": "Bearer token for agentmemory, when configured",
+          "env": "AGENTMEMORY_SECRET"
+        },
+        "tokenBudget": {
+          "type": "number",
+          "description": "Token budget for recalled session context",
+          "default": 2000,
+          "env": "AGENTMEMORY_TOKEN_BUDGET"
+        }
+      }
+    },
+    ".": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    }
+  },
+  "engines": {
+    "node": ">=18",
+    "opencode": "^1.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.15.0",
+    "@types/node": "^24.12.2",
+    "typescript": "^5.8.2"
+  }
+}
