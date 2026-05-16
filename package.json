@@ -32,6 +32,75 @@
           "description": "Token budget for recalled session context",
           "default": 2000,
           "env": "AGENTMEMORY_TOKEN_BUDGET"
+        },
+        "compactionBudget": {
+          "type": "number",
+          "description": "Token budget for recalled compaction context"
+        },
+        "timeoutMs": {
+          "type": "number",
+          "description": "Default agentmemory request timeout in milliseconds",
+          "default": 3000
+        },
+        "shortTimeoutMs": {
+          "type": "number",
+          "description": "Timeout for best-effort observation requests in milliseconds",
+          "default": 800
+        },
+        "injectTimeoutMs": {
+          "type": "number",
+          "description": "Timeout for context and enrichment requests in milliseconds",
+          "default": 1500
+        },
+        "summarizeTimeoutMs": {
+          "type": "number",
+          "description": "Timeout for stop summarization requests in milliseconds",
+          "default": 120000
+        },
+        "sessionEndTimeoutMs": {
+          "type": "number",
+          "description": "Timeout for terminal session end requests in milliseconds",
+          "default": 30000
+        },
+        "consolidationTimeoutMs": {
+          "type": "number",
+          "description": "Timeout for optional consolidation requests in milliseconds",
+          "default": 120000
+        },
+        "injectSessionContext": {
+          "type": "boolean",
+          "description": "Inject recalled session context into the system prompt",
+          "default": true,
+          "env": "AGENTMEMORY_INJECT_SESSION_CONTEXT"
+        },
+        "injectToolContext": {
+          "type": "boolean",
+          "description": "Fetch pre-tool enrichment context for file/search tools",
+          "default": false,
+          "env": "AGENTMEMORY_INJECT_CONTEXT"
+        },
+        "summarizeOnStop": {
+          "type": "boolean",
+          "description": "Call summarize when Kilo emits session.idle",
+          "default": true,
+          "env": "AGENTMEMORY_SUMMARIZE_ON_STOP"
+        },
+        "consolidationEnabled": {
+          "type": "boolean",
+          "description": "Run optional consolidation endpoints on terminal session end",
+          "default": false,
+          "env": "CONSOLIDATION_ENABLED"
+        },
+        "memoryBridgeSync": {
+          "type": "boolean",
+          "description": "Run optional Claude memory bridge sync during compaction and session end",
+          "default": false,
+          "env": "CLAUDE_MEMORY_BRIDGE"
+        },
+        "endSessionOnIdle": {
+          "type": "boolean",
+          "description": "Treat session.idle as terminal session end for legacy behavior",
+          "default": false
         }
       }
     },

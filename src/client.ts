@@ -7,7 +7,12 @@ export class AgentmemoryClient {
     private readonly log: BridgeLogger,
   ) {}
 
-  async post<T>(path: string, body: unknown, timeoutMs = this.config.timeoutMs): Promise<T | null> {
+  async post<T>(
+    path: string,
+    body: unknown,
+    timeoutMs = this.config.timeoutMs,
+    options: { optionalStatuses?: number[] } = {},
+  ): Promise<T | null> {
     const url = `${this.config.baseUrl}/agentmemory${path.startsWith("/") ? path : `/${path}`}`;
 
     if (typeof fetch !== "function") {
@@ -32,7 +37,7 @@ export class AgentmemoryClient {
       const response = await fetch(url, init);
 
       if (!response.ok) {
-        await this.safeLog("warn", "agentmemory request failed", {
+        await this.safeLog(options.optionalStatuses?.includes(response.status) ? "debug" : "warn", "agentmemory request failed", {
           path,
           status: response.status,
           statusText: response.statusText,
@@ -59,6 +64,10 @@ export class AgentmemoryClient {
       });
       return null;
     }
+  }
+
+  async postVoid(path: string, body: unknown, timeoutMs = this.config.timeoutMs, options?: { optionalStatuses?: number[] }): Promise<void> {
+    await this.post(path, body, timeoutMs, options);
   }
 
   private async safeLog(level: "debug" | "info" | "warn" | "error", message: string, extra?: unknown): Promise<void> {
