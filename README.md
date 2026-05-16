@@ -189,7 +189,12 @@ Use `kilo config check` for validation when local config contains bearer tokens.
 
 ## Publishing
 
-This package is configured for npm trusted publishing from GitHub Actions. The workflow lives at `.github/workflows/publish-npm.yml` and runs when a GitHub release is published.
+This package is configured for tag-based releases and npm trusted publishing from GitHub Actions.
+
+Pushing a new `vX.Y.Z` tag runs two workflows:
+
+- `.github/workflows/create-release.yml` creates a GitHub Release with generated release notes.
+- `.github/workflows/publish-npm.yml` publishes the same version to npm with trusted publishing.
 
 Before the workflow can publish with OIDC, configure npm trusted publishing for this package on npmjs.com:
 
@@ -200,9 +205,9 @@ Before the workflow can publish with OIDC, configure npm trusted publishing for 
 
 Trusted publishing requires npm CLI `11.5.1` or newer and Node.js `22.14.0` or newer. The workflow uses Node.js `24.x` so the bundled npm supports OIDC publishing and automatic provenance.
 
-For a release publish, update `package.json` and `package-lock.json` to the target version, tag the same commit as `vX.Y.Z`, and publish a GitHub release for that tag. The workflow verifies that the release tag matches `package.json` before publishing.
+For a release publish, update `package.json` and `package-lock.json` to the target version, commit the change, tag the same commit as `vX.Y.Z`, and push the tag. Both workflows verify that the tag matches `package.json` before publishing or creating the release.
 
-If npm does not allow trusted publisher setup before the package exists, do one initial manual publish from a clean checkout with an npm account that can publish the package: `npm publish --access public --provenance=false`. After that, configure trusted publishing and use GitHub releases for future publishes.
+If npm does not allow trusted publisher setup before the package exists, do one initial manual publish from a clean checkout with an npm account that can publish the package: `npm publish --access public --provenance=false`. After that, configure trusted publishing and use `vX.Y.Z` tag pushes for future releases.
 
 ## Troubleshooting
 

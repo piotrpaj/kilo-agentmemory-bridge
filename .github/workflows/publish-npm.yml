@@ -1,8 +1,9 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
@@ -33,12 +34,11 @@ jobs:
         run: npm --version
 
       - name: Verify release version
-        if: github.event_name == 'release'
         run: |
           package_version="$(node -p "require('./package.json').version")"
           release_version="${GITHUB_REF_NAME#v}"
           if [ "$package_version" != "$release_version" ]; then
-            echo "package.json version $package_version does not match release tag $GITHUB_REF_NAME"
+            echo "package.json version $package_version does not match tag $GITHUB_REF_NAME"
             exit 1
           fi
 
