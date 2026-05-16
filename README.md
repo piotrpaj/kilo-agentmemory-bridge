@@ -187,6 +187,23 @@ kilo config check --print-logs --log-level DEBUG
 
 Use `kilo config check` for validation when local config contains bearer tokens. `kilo debug config` may print resolved secret values.
 
+## Publishing
+
+This package is configured for npm trusted publishing from GitHub Actions. The workflow lives at `.github/workflows/publish-npm.yml` and runs when a GitHub release is published.
+
+Before the workflow can publish with OIDC, configure npm trusted publishing for this package on npmjs.com:
+
+- Publisher: GitHub Actions
+- Repository: `piotrpaj/kilo-agentmemory-bridge`
+- Workflow file: `publish-npm.yml`
+- Environment: leave blank unless the workflow is updated to use a GitHub environment
+
+Trusted publishing requires npm CLI `11.5.1` or newer and Node.js `22.14.0` or newer. The workflow uses Node.js `24.x` so the bundled npm supports OIDC publishing and automatic provenance.
+
+For a release publish, update `package.json` and `package-lock.json` to the target version, tag the same commit as `vX.Y.Z`, and publish a GitHub release for that tag. The workflow verifies that the release tag matches `package.json` before publishing.
+
+If npm does not allow trusted publisher setup before the package exists, do one initial manual publish from a clean checkout with an npm account that can publish the package: `npm publish --access public --provenance=false`. After that, configure trusted publishing and use GitHub releases for future publishes.
+
 ## Troubleshooting
 
 | Symptom | Check |

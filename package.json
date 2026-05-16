@@ -1,16 +1,37 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "kilo-agentmemory-bridge",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Kilo/OpenCode plugin bridge for agentmemory.",
+  "keywords": [
+    "agentmemory",
+    "kilo",
+    "opencode",
+    "plugin",
+    "claude-code",
+    "memory"
+  ],
+  "homepage": "https://github.com/piotrpaj/kilo-agentmemory-bridge#readme",
+  "bugs": {
+    "url": "https://github.com/piotrpaj/kilo-agentmemory-bridge/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrpaj/kilo-agentmemory-bridge.git"
+  },
   "type": "module",
   "license": "MIT",
+  "packageManager": "npm@11.13.0",
   "main": "./dist/server.js",
   "types": "./dist/server.d.ts",
   "files": [
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
     "./server": {
       "import": "./dist/server.js",
@@ -116,7 +137,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepare": "npm run build"
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck"
   },
   "devDependencies": {
     "@opencode-ai/plugin": "^1.15.0",
