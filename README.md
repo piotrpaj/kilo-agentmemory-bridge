@@ -1,13 +1,17 @@
 # kilo-agentmemory-bridge
 
-Server plugin that connects Kilo/OpenCode sessions to a local [agentmemory](https://github.com/rohitg00/agentmemory) server.
+Kilo/OpenCode plugin bridge that connects agent sessions to a local [agentmemory](https://github.com/rohitg00/agentmemory) API server.
 
-It passively records prompts, tool usage, lifecycle events, compaction events, permission prompts, and selected best-effort Kilo events. It also injects recalled context into system prompts and compaction prompts.
+It is not an agentmemory server and it does not start a network service. Kilo/OpenCode loads the plugin module, calls its hook functions, and this bridge sends best-effort HTTP requests to an already-running agentmemory server.
+
+The implementation uses the `@opencode-ai/plugin` module shape: the default export is a `PluginModule` with a `server(input, options)` function that returns runtime hooks such as `chat.message`, `tool.execute.before`, `tool.execute.after`, `permission.ask`, and `experimental.session.compacting`. In this context, `server` is the OpenCode plugin API entrypoint name, not a claim that this package is a standalone server.
+
+The bridge passively records prompts, tool usage, lifecycle events, compaction events, permission prompts, and selected best-effort Kilo events. It can also inject recalled context into system prompts and compaction prompts.
 
 ## Requirements
 
-- Kilo or OpenCode with server plugin support.
-- A local agentmemory server:
+- Kilo or OpenCode with plugin support compatible with `@opencode-ai/plugin`.
+- A running agentmemory API server:
 
 ```sh
 npx @agentmemory/agentmemory
@@ -22,11 +26,11 @@ npm install
 npm run build
 ```
 
-The plugin entrypoint is `./dist/server.js`.
+The compiled plugin entrypoint is `./dist/server.js`. The filename mirrors the OpenCode plugin API field name; it is not a runnable HTTP server entrypoint.
 
 ## Plugin vs MCP
 
-This package is a Kilo/OpenCode server plugin. It observes Kilo runtime hooks and sends them to agentmemory.
+This package is a Kilo/OpenCode plugin. It observes Kilo runtime hooks and sends them to agentmemory over HTTP.
 
 MCP is separate. If you already use the agentmemory MCP server, keep that configuration as-is. This plugin does not install, modify, or replace MCP configuration.
 
@@ -63,7 +67,7 @@ Use `kilo config check` for config validation. Avoid `kilo debug config` if your
 
 ## OpenCode Install
 
-OpenCode can load local plugins from configured plugin paths or package references. Build first, then reference the server entrypoint or package export.
+OpenCode can load local plugins from configured plugin paths or package references. Build first, then reference the compiled plugin entrypoint or package export.
 
 Example config tuple:
 
@@ -180,7 +184,7 @@ Redaction is best-effort and should not be treated as a security boundary.
 1. Run `npm install` and `npm run build`.
 2. Start agentmemory with `npx @agentmemory/agentmemory`.
 3. Verify `http://localhost:3111/agentmemory/health` responds.
-4. Configure Kilo/OpenCode to load `dist/server.js`.
+4. Configure Kilo/OpenCode to load the plugin from `dist/server.js`.
 5. Start an agent session and confirm logs show `agentmemory bridge loaded`.
 6. Send a prompt and run read/search/bash/edit tools.
 7. Open `http://localhost:3113` and confirm observations appear.

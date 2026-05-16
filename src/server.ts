@@ -200,7 +200,7 @@ async function server(input: PluginInput, options?: RawPluginOptions): Promise<H
       await observeToolResult(memory, sessions, project, cwd, failed ? "post_tool_failure" : "post_tool_use", toolInput.sessionID, toolInput.callID, {
         tool_name: toolInput.tool,
         tool_input: redact(toolInput.args),
-        title: redactString(output.title),
+        title: redactString(stringOrEmpty(output.title)),
         metadata: redact(output.metadata),
         ...formatCapturedOutput(output.output),
         call_id: toolInput.callID,
@@ -662,17 +662,21 @@ function extractText(value: unknown): string {
   return parts.map(extractText).filter(Boolean).join("\n").trim();
 }
 
-function isFailedToolOutput(output: { title: string; output: string; metadata: unknown }): boolean {
+function isFailedToolOutput(output: { title?: unknown; output?: unknown; metadata?: unknown }): boolean {
   if (isRecord(output.metadata)) {
     const status = getStringAtPath(output.metadata, ["status"])?.toLowerCase();
     if (status && ["error", "failed", "failure"].includes(status)) return true;
     if (output.metadata.error || output.metadata.failed === true || output.metadata.success === false) return true;
   }
 
-  const title = output.title.toLowerCase();
+  const title = stringOrEmpty(output.title).toLowerCase();
   if (/\b(error|failed|failure)\b/.test(title)) return true;
 
-  return /^\s*(error|failed|failure):/i.test(output.output);
+  return /^\s*(error|failed|failure):/i.test(stringOrEmpty(output.output));
+}
+
+function stringOrEmpty(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }
 
 function formatCapturedOutput(output: unknown): Record<string, unknown> {

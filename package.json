@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "kilo-agentmemory-bridge",
   "version": "0.1.0",
-  "description": "Kilo/OpenCode server plugin bridge for agentmemory.",
+  "description": "Kilo/OpenCode plugin bridge for agentmemory.",
   "type": "module",
   "license": "MIT",
   "main": "./dist/server.js",
