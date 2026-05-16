@@ -1,5 +1,6 @@
 node_modules/
 dist/
 plans/
+.kilo/kilo.json
 *.tsbuildinfo
 .DS_Store
